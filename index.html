@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <title>🦜 🔗 Text Summarization App</title>
+</head>
+<style>
+     body {
+    font-family: Arial, sans-serif;
+    background-color: #030315;
+    margin: 0;
+    padding: 0;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+        color: #fff;
+        font-size: 40px;
+        margin-top: 10%;
+    }
+
+    .file-upload-container {
+    background-color: #393643 ;
+    border: 2px dashed #007BFF; 
+    padding: 30px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+    text-align: center; 
+    height: 140px; 
+    }
+
+    .file-upload-container:hover {
+        border: 2px dashed #FF0000; 
+    }
+
+    .file-upload-container:hover p {
+        text-shadow: 1px 1px 3px #FF0000;
+    }
+
+    #file-upload-input {
+        display: none; 
+    }
+
+    .custom-file-input {
+        background-color: hsl(0, 0%, 9%);
+        color: #cccccc;
+        border: 1px solid #727272;
+        padding: 10px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .custom-file-input:hover {
+        border: 1px solid rgb(233, 49, 49);
+        color: rgb(233, 49, 49);
+        font-weight: 400;
+    }
+
+    p {
+        color: #999999;
+    }
+
+    .custom-file-input {
+        margin-top: 35px;
+    }
+
+    .file-upload-container p {
+        margin-bottom: 35px; 
+    }
+
+    #selected-file-name {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    #selected-file-size {
+        margin-top: 5px;
+    }
+    .submit-container {
+        background: none;
+        border: 2px solid #5c5b5b;
+        border-radius: 5px;
+        padding: 15px; 
+        display: flex;
+        display: none;
+        flex-direction: column; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-top: 20px;
+        }
+
+
+    #submit-button {
+        background-color: hsl(0, 0%, 1%);
+        color: #cccccc;
+        border: 1px solid #4e4e4e;
+        padding: 10px 20px;
+        margin-right: 85%;
+        margin-top: 15;
+        border-radius: 5px;
+        cursor: pointer;
+        display: none;
+        margin-top: 0px;
+        transition: background-color 0.3s ease;
+    } 
+
+    #submit-button:hover {
+        border: 1px solid rgb(233, 49, 49);
+        color: rgb(233, 49, 49);
+        font-weight: 400;
+    }
+
+    .loading-indicator-container {
+        display: none;
+        margin-top: 18px;
+        margin-right: 80%;
+
+    }
+
+    .loading-indicator {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        margin-left: 10%;
+        border: 4px solid rgba(0, 123, 255, 0.2); 
+        border-top: 4px solid #007BFF; 
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    .loading-text {
+
+        align-items: center;
+        color: #fff;
+        top: 60%;
+        margin-left: 60px;
+    }
+
+
+    .summary {
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    h2 {
+        color: #333;
+        font-size: 1.5rem;
+    }
+
+    p.summary-text {
+        font-size: 1.2rem;
+        line-height: 1.5;
+    }
+   
+
+    #file-info-container {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    #file-info-container i {
+        margin-right: 10px;
+        font-size: 25px;
+    }
+
+
+    #file-info p {
+        margin-left: 10px;
+    }
+
+
+    #remove-file-icon {
+        margin-left: auto;
+    }
+    #summary-container {
+        display: none; 
+        background-color: rgb(14, 41, 41);
+        padding: 10px;
+        margin-top: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        width: auto; 
+        max-width: 90%; 
+        height: auto; 
+    }
+
+    #summary-container p {
+        font-size: 15px;
+        line-height: 1.3;
+        color: #d6d5d5;
+    }
+</style>
+<body>
+    <div class="container">
+        <h1>🦜 🔗 Text Summarization App</h1>
+        <p style="margin-right: 75%; color: #fff; font-size: 17px;">Upload a file here</p>
+        <div class="file-upload-container" onclick="selectFile()">
+            <i class="fas fa-cloud-upload-alt" style="color: #fff; font-size: 27px;"></i>
+            <p>Click or Drag and Drop a Text File Here</p>
+            <label for="file-upload-in`put" class="custom-file-input">Browse files</label>
+            <input type="file" id="file-upload-input" accept=".txt" onchange="handleFileUpload(this.files)">
+        </div>
+
+        <div id="file-info-container">
+            <i class="far fa-file-alt"></i>
+            <p id="selected-file-name"></p>
+            <span id="selected-file-size" style="margin-bottom: 7px; margin-left: 22px; font-size: 12px; color: #cccccc;"></span>
+            <i id="remove-file-icon" class="fa fa-times" style="color: #FF0000; font-size: 16px; cursor: pointer; display: none;" onclick="removeSelectedFile()"></i>
+        </div>
+
+        <div class="submit-container">
+            <button id="submit-button" onclick="submitFile()">Submit</button>
+            <div class="loading-indicator-container" id="loading-indicator-container">
+                <div class="loading-indicator" id="loading-indicator"></div>
+                <span class="loading-text">Processing...</span>
+            </div>            
+        </div>
+
+        <div class="summary">
+            <div id="summary-container" style="background-color: white;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function selectFile() {
+            const fileInput = document.getElementById('file-upload-input');
+            fileInput.click();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            handleFileUpload(fileInput.files);
+        }
+        function handleFileUpload(files) {
+            const selectedFile = files[0];
+            const fileNameElement = document.getElementById('selected-file-name');
+            const fileSizeElement = document.getElementById('selected-file-size');
+            const submitButton = document.getElementById('submit-button');
+            const submitButtonContainer = document.querySelector('.submit-container');
+            const removeFileIcon = document.getElementById('remove-file-icon');
+
+            if (selectedFile) {
+                fileNameElement.innerHTML = `<i class="far fa-file-alt"></i> ${selectedFile.name}`;
+                fileSizeElement.textContent = `    ${(selectedFile.size / 1024).toFixed(2)} KB`;
+
+                submitButton.style.display = 'block';
+                submitButtonContainer.style.display = 'flex';
+                removeFileIcon.style.display = 'inline-block';
+            } else {
+                submitButtonContainer.style.display = 'none';
+                fileNameElement.textContent = '';
+                fileSizeElement.textContent = '';
+
+                submitButton.style.display = 'none';
+                removeFileIcon.style.display = 'none';
+            }
+        }
+
+        function removeSelectedFile() {
+            const fileInput = document.getElementById('file-upload-input');
+            fileInput.value = '';
+            handleFileUpload([]);
+        }
+
+        function updateSummary(summaryText) {
+            const summaryContainer = document.getElementById('summary-container');
+            summaryContainer.style.display = 'block';
+            summaryContainer.style.backgroundColor = 'rgb(14, 41, 41)';
+            summaryContainer.innerHTML = `<p>${summaryText}</p>`;
+        }
+
+        function submitFile() {
+        const fileInput = document.getElementById('file-upload-input');
+        const selectedFile = fileInput.files[0];
+
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            const loadingIndicatorContainer = document.getElementById('loading-indicator-container');
+            loadingIndicatorContainer.style.display = 'block'; // Show loading elements
+
+            fetch('/SummarizeView', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`API request failed with status: ${response.status}`);
+                }
+                return response.json();
+            })
+                .then(summary => {
+                loadingIndicatorContainer.style.display = 'none'; // Hide loading elements when done
+                updateSummary(summary.summary);
+            })
+            .catch(error => {
+                console.error('API call failed:', error);
+                loadingIndicatorContainer.style.display = 'none'; // Hide loading elements on error
+                updateSummary('API call failed: ' + error.message);
+            });
+        }
+    }
+    </script>
+</body>
+</html>
+
